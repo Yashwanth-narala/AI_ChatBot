@@ -1,27 +1,81 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { RightPanel } from "@/components/right-panel"
+import { useState, useCallback } from "react";
+import type { Chapter } from "@/types/chapter";
+import { Sidebar } from "@/components/sidebar";
+import { RightPanel } from "@/components/right-panel";
+
+const CHAPTERS: Chapter[] = [
+  {
+    id: "first-expedition",
+    title: "First Expedition Against Sasanka",
+    status: "in-progress",
+    progress: 30,
+    badgeText: "30% completed",
+    statusLabel: "30%",
+    partLabel: "Part 1",
+    bodyHeading: "The Challenge Ahead",
+    body: [],
+  },
+  {
+    id: "conquest-after-death",
+    title: "Conquest after Sasanka's death",
+    status: "not-started",
+    progress: 0,
+    badgeText: undefined,
+    statusLabel: "Not started",
+    partLabel: "Overview",
+    bodyHeading: "Aftermath of the Conflict",
+    body: [],
+  },
+  {
+    id: "conquest-of-magadha",
+    title: "Conquest of Magadha",
+    status: "not-started",
+    progress: 0,
+    badgeText: undefined,
+    statusLabel: "Not started",
+    partLabel: "Prelude",
+    bodyHeading: "Towards Magadha",
+    body: [],
+  },
+];
 
 export default function PrepdhaPage() {
-  const [contextReference, setContextReference] = useState<string | null>(null)
+  const [selectedChapterId, setSelectedChapterId] = useState(
+    CHAPTERS[0]?.id ?? ""
+  );
+
+  const [contextReference, setContextReference] = useState<string | null>(null);
 
   const handleClearReference = useCallback(() => {
-    setContextReference(null)
-  }, [])
+    setContextReference(null);
+  }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
-      <div className="flex-1 min-h-0 flex">
-        <div className="ml-auto h-full w-full max-w-md min-w-[320px]">
+    <div className="flex h-screen bg-[#f5f5fb] overflow-hidden">
+      
+      {/* Sidebar */}
+      <div className="w-80 p-6">
+        <Sidebar
+          chapters={CHAPTERS}
+          selectedChapterId={selectedChapterId}
+          onSelectChapter={setSelectedChapterId}
+        />
+      </div>
+
+      {/* Right Panel */}
+      <div className="flex-1 flex justify-end">
+        <div className="h-full w-full max-w-md min-w-[320px] bg-background">
           <RightPanel
             contextReference={contextReference}
             onClearReference={handleClearReference}
             chapterContext={null}
-            currentChapterId={null}
+            currentChapterId={selectedChapterId}
           />
         </div>
       </div>
+
     </div>
-  )
+  );
 }
