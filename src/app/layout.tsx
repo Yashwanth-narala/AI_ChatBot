@@ -1,8 +1,7 @@
-import type { Metadata, Viewport } from "next"
-import { Inter, Source_Sans_3 } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import { ThemeProvider } from "@/components/right-panel/theme-provider"
-import "./globals.css"
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import {Navbar} from '../components/layout/Navbar'
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 const sourceSans = Source_Sans_3({
@@ -30,14 +29,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${sourceSans.variable} font-sans antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-        >
-          {children}
-        </ThemeProvider>
-        <Analytics />
+        {/* <TopicHeader/> */}
+        <Navbar/>
+        {children}
       </body>
     </html>
   )

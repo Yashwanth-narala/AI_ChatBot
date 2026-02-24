@@ -1,16 +1,8 @@
 "use client";
 
-<<<<<<< HEAD
-import { useState, useCallback } from "react";
-import type { Chapter } from "@/types/chapter";
-import { Navbar, TopicHeader } from "@/components/layout";
-import { Sidebar } from "@/components/sidebar";
-import RightPanel from "@/components/right-panel-new/RightPanel";
-=======
 import { useState } from "react";
 import type { Chapter } from "@/types/chapter";
 import { Sidebar } from "@/components/sidebar";
->>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
 
 const CHAPTERS: Chapter[] = [
   {
@@ -48,75 +40,28 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
-<<<<<<< HEAD
-export default function PrepdhaPage() {
-  const [selectedChapterId, setSelectedChapterId] = useState(
-    CHAPTERS[0]?.id ?? ""
-  );
-
-  const selectedChapter =
-    CHAPTERS.find((c) => c.id === selectedChapterId) ?? CHAPTERS[0];
-
-  const [contextReference, setContextReference] = useState<string | null>(null);
-
-  const handleClearReference = useCallback(() => {
-    setContextReference(null);
-  }, []);
-
-  return (
-    <div className="min-h-screen bg-[#f5f5fb] flex flex-col">
-      {/* Top Navbar */}
-      <Navbar />
-
-      {/* Topic Header */}
-      <TopicHeader
-        title={selectedChapter.title}
-        progress={selectedChapter.progress}
-      />
-
-      {/* Main Layout */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-80 p-6">
-          <Sidebar
-            chapters={CHAPTERS}
-            selectedChapterId={selectedChapterId}
-            onSelectChapter={setSelectedChapterId}
-          />
-        </div>
-
-        {/* Right Panel */}
-        <div className="flex-1 flex justify-end">
-          <div className="h-full w-full max-w-md min-w-[320px] bg-background">
-            <RightPanel
-              contextReference={contextReference}
-              onClearReference={handleClearReference}
-              chapterContext={null}
-              currentChapterId={selectedChapterId}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-=======
 export default function SidebarOnlyPage() {
   const [selectedChapterId, setSelectedChapterId] = useState(
     CHAPTERS[0]?.id ?? ""
   );
 
   return (
-    <div className="min-h-screen bg-[#f5f5fb] p-6">
-      {/* Centered container just for Sidebar */}
-      <div className="mx-auto max-w-xs">
+    <div className="min-h-screen flex">
+      {/* LEFT SIDEBAR */}
+      <aside className="p-6">
         <Sidebar
           chapters={CHAPTERS}
           selectedChapterId={selectedChapterId}
           onSelectChapter={setSelectedChapterId}
         />
-      </div>
+      </aside>
+
+      {/* EMPTY MAIN AREA (for now) */}
+      <main className="flex-1 p-6">
+        <div className="h-full rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-400">
+          Main content will go here later
+        </div>
+      </main>
     </div>
   );
 }
->>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
