@@ -25,8 +25,5 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 run in CLI
 
 ```bash
-npm install lucide-react
-npm install @vercel/analytics
-npm install tailwindcss-animate
-npm install next-themes
+npm install lucide-react @vercel/analytics tailwindcss-animate next-themes
 ```
