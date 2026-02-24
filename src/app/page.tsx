@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { Chapter } from "@/types/chapter";
 import { Sidebar } from "@/components/sidebar";
+import { RightPanel } from "@/components/right-panel";
 
 const CHAPTERS: Chapter[] = [
   {
@@ -40,21 +41,41 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
-export default function SidebarOnlyPage() {
+export default function PrepdhaPage() {
   const [selectedChapterId, setSelectedChapterId] = useState(
     CHAPTERS[0]?.id ?? ""
   );
 
+  const [contextReference, setContextReference] = useState<string | null>(null);
+
+  const handleClearReference = useCallback(() => {
+    setContextReference(null);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#f5f5fb] p-6">
-      {/* Centered container just for Sidebar */}
-      <div className="mx-auto max-w-xs">
+    <div className="flex h-screen bg-[#f5f5fb] overflow-hidden">
+      
+      {/* Sidebar */}
+      <div className="w-80 p-6">
         <Sidebar
           chapters={CHAPTERS}
           selectedChapterId={selectedChapterId}
           onSelectChapter={setSelectedChapterId}
         />
       </div>
+
+      {/* Right Panel */}
+      <div className="flex-1 flex justify-end">
+        <div className="h-full w-full max-w-md min-w-[320px] bg-background">
+          <RightPanel
+            contextReference={contextReference}
+            onClearReference={handleClearReference}
+            chapterContext={null}
+            currentChapterId={selectedChapterId}
+          />
+        </div>
+      </div>
+
     </div>
   );
 }
