@@ -8,13 +8,24 @@ export function LightningIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-export function CheckIcon(props: SVGProps<SVGSVGElement>) {
+export function CheckIcon({
+  size = 16,
+  ...props
+}: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
-      <path
-        d="M9.5 16.2 5.8 12.5l-1.3 1.3 5 5 9-9-1.3-1.3-7.7 7.7Z"
-        fill="currentColor"
-      />
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <polyline points="20 6 9 17 4 12" />
     </svg>
   );
 }

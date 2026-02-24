@@ -1,10 +1,16 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useCallback } from "react";
 import type { Chapter } from "@/types/chapter";
 import { Navbar, TopicHeader } from "@/components/layout";
 import { Sidebar } from "@/components/sidebar";
 import RightPanel from "@/components/right-panel-new/RightPanel";
+=======
+import { useState } from "react";
+import type { Chapter } from "@/types/chapter";
+import { Sidebar } from "@/components/sidebar";
+>>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
 
 const CHAPTERS: Chapter[] = [
   {
@@ -42,6 +48,7 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
+<<<<<<< HEAD
 export default function PrepdhaPage() {
   const [selectedChapterId, setSelectedChapterId] = useState(
     CHAPTERS[0]?.id ?? ""
@@ -93,3 +100,23 @@ export default function PrepdhaPage() {
     </div>
   );
 }
+=======
+export default function SidebarOnlyPage() {
+  const [selectedChapterId, setSelectedChapterId] = useState(
+    CHAPTERS[0]?.id ?? ""
+  );
+
+  return (
+    <div className="min-h-screen bg-[#f5f5fb] p-6">
+      {/* Centered container just for Sidebar */}
+      <div className="mx-auto max-w-xs">
+        <Sidebar
+          chapters={CHAPTERS}
+          selectedChapterId={selectedChapterId}
+          onSelectChapter={setSelectedChapterId}
+        />
+      </div>
+    </div>
+  );
+}
+>>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)

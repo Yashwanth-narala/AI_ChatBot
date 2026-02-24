@@ -15,7 +15,12 @@ export function Sidebar({
   selectedChapterId,
   onSelectChapter,
 }: SidebarProps) {
+<<<<<<< HEAD
   const [isOpen, setIsOpen] = useState(true);
+=======
+  // 👇 START CLOSED
+  const [isOpen, setIsOpen] = useState(false);
+>>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
 
   return (
     <aside className="w-64 shrink-0 rounded-2xl bg-white p-4 shadow-sm">
@@ -33,7 +38,11 @@ export function Sidebar({
         />
       </button>
 
+<<<<<<< HEAD
       {/* Content (only when open) */}
+=======
+      {/* Content (hidden initially) */}
+>>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
       {isOpen && (
         <>
           {/* Category */}
@@ -51,12 +60,17 @@ export function Sidebar({
                   key={chapter.id}
                   type="button"
                   onClick={() => onSelectChapter(chapter.id)}
+<<<<<<< HEAD
                   className={`flex w-full items-start gap-3 rounded-xl px-3 py-2 text-left text-[13px] transition ${
+=======
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13px] transition ${
+>>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
                     isActive
                       ? "bg-[#eef2ff] font-semibold text-[--accent-purple]"
                       : "text-gray-500 hover:bg-gray-50"
                   }`}
                 >
+<<<<<<< HEAD
                   {/* Left: title + subtitle */}
                   <div className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate">
@@ -73,6 +87,21 @@ export function Sidebar({
                   {/* Right: status / progress */}
                   <span
                     className={`shrink-0 flex h-7 min-w-[36px] items-center justify-center rounded-full text-[10px] font-semibold ${
+=======
+                  {/* Title + badge */}
+                  <span className="flex flex-col">
+                    <span className="truncate">{chapter.title}</span>
+                    {chapter.badgeText && (
+                      <span className="text-[10px] font-medium text-gray-500">
+                        {chapter.badgeText}
+                      </span>
+                    )}
+                  </span>
+
+                  {/* Status / Progress */}
+                  <span
+                    className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-semibold ${
+>>>>>>> 8e596ea (Add collapsible Sidebar and PrepdhaLogo component)
                       chapter.status === "in-progress"
                         ? "bg-white text-[--accent-purple]"
                         : "bg-gray-100 text-gray-500"

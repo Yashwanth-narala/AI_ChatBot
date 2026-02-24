@@ -10,7 +10,7 @@ export function TopicHeader({ title, progress }: TopicHeaderProps) {
 
   return (
     <section className="border-b border-[--border-subtle] bg-white/70">
-      <div className=" mx-auto flex max-w-6xl flex-col gap-2 px-6 py-4">
+      <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-4">
         <div className="flex items-center gap-2 text-xs text-gray-500">
           <span>History</span>
           <span>/</span>
@@ -21,7 +21,7 @@ export function TopicHeader({ title, progress }: TopicHeaderProps) {
         <div className="flex items-center justify-between gap-4">
         <div className="font-black text-2xl font-weight:bold border-grey border-2 rounded-md p-2">&lt;</div>
           <div className="flex items-center gap-3">
-            <h1 className=" text-black text-xl font-semibold tracking-tight">{title}</h1>
+            <h1 className="text-xl font-semibold tracking-tight">{title}</h1>
             <span className="rounded-full bg-yellow-100 px-3 py-1 text-[11px] font-semibold text-yellow-800">
               Needs Attention
             </span>
