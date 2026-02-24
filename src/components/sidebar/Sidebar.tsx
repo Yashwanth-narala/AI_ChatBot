@@ -15,8 +15,7 @@ export function Sidebar({
   selectedChapterId,
   onSelectChapter,
 }: SidebarProps) {
-  // 👇 START CLOSED
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <aside className="w-64 shrink-0 rounded-2xl bg-white p-4 shadow-sm">
@@ -34,7 +33,7 @@ export function Sidebar({
         />
       </button>
 
-      {/* Content (hidden initially) */}
+      {/* Content (only when open) */}
       {isOpen && (
         <>
           {/* Category */}
