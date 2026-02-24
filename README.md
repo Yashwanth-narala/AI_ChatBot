@@ -29,6 +29,54 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## File Structure
+
+```
+.git/
+.gitignore
+.next/
+eslint.config.mjs
+next-env.d.ts
+next.config.ts
+node_modules/
+package-lock.json
+package.json
+postcss.config.mjs
+public/
+	file.svg
+	globe.svg
+	next.svg
+	vercel.svg
+	window.svg
+README.md
+tsconfig.json
+src/
+	action/
+		.gitkeep
+	app/
+		globals.css
+		layout.tsx
+		page.tsx
+	components/
+		.gitkeep
+		Layouts/
+			.gitkeep
+	hooks/
+		.gitkeep
+	lib/
+		.gitkeep
+	server/
+		.gitkeep
+	store/
+		.gitkeep
+	styles/
+		.gitkeep
+	themes/
+		.gitkeep
+	types/
+		.gitkeep
+```
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
