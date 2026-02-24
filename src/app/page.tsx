@@ -40,21 +40,45 @@ const CHAPTERS: Chapter[] = [
   },
 ];
 
-export default function SidebarOnlyPage() {
-  const [selectedChapterId, setSelectedChapterId] = useState(
-    CHAPTERS[0]?.id ?? ""
-  );
+// export default function SidebarOnlyPage() {
+//   const [selectedChapterId, setSelectedChapterId] = useState(
+//     CHAPTERS[0]?.id ?? ""
+//   );
+
+//   return (
+//     <div className="min-h-screen bg-[#f5f5fb] p-6">
+//       {/* Centered container just for Sidebar */}
+//       <div className="mx-auto max-w-xs">
+//         <Sidebar
+//           chapters={CHAPTERS}
+//           selectedChapterId={selectedChapterId}
+//           onSelectChapter={setSelectedChapterId}
+//         />
+//       </div>
+//     </div>
+//   );
+// }
+
+export default function Page() {
+  const [selectedChapterId, setSelectedChapterId] = useState("");
 
   return (
-    <div className="min-h-screen bg-[#f5f5fb] p-6">
-      {/* Centered container just for Sidebar */}
-      <div className="mx-auto max-w-xs">
+    <div className="min-h-screen flex">
+      {/* LEFT SIDEBAR */}
+      <aside className="p-6">
         <Sidebar
           chapters={CHAPTERS}
           selectedChapterId={selectedChapterId}
           onSelectChapter={setSelectedChapterId}
         />
-      </div>
+      </aside>
+
+      {/* EMPTY MAIN AREA (for now) */}
+      <main className="flex-1 p-6">
+        <div className="h-full rounded-xl border border-dashed border-gray-300 flex items-center justify-center text-gray-400">
+          Main content will go here later
+        </div>
+      </main>
     </div>
   );
 }
