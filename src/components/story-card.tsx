@@ -11,9 +11,10 @@ import type { StoryCardData } from "@/lib/types"
 interface StoryCardProps {
   data: StoryCardData
   priority?: boolean
+  onAskAI?: (text: string) => void
 }
 
-export function StoryCard({ data, priority = false }: StoryCardProps) {
+export function StoryCard({ data, priority = false, onAskAI }: StoryCardProps) {
   const [expanded, setExpanded] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
   const selectableRef = useRef<HTMLDivElement>(null)
@@ -107,6 +108,7 @@ export function StoryCard({ data, priority = false }: StoryCardProps) {
           rect={rect}
           isVisible={isVisible}
           onClearSelection={clearSelection}
+          onAskAI={onAskAI}
         />
       </div>
     </article>

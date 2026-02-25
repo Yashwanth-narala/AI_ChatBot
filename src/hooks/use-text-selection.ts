@@ -14,7 +14,6 @@ export function useTextSelection(containerRef: RefObject<HTMLElement | null>) {
     rect: null,
     isVisible: false,
   })
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const updateSelection = useCallback(() => {
     const sel = window.getSelection()
@@ -32,7 +31,7 @@ export function useTextSelection(containerRef: RefObject<HTMLElement | null>) {
     }
 
     const text = sel.toString().trim()
-    if (text.length === 0) {
+    if (text.length < 3) {
       setSelection({ text: "", rect: null, isVisible: false })
       return
     }
@@ -48,8 +47,12 @@ export function useTextSelection(containerRef: RefObject<HTMLElement | null>) {
 
   useEffect(() => {
     const handleSelectionChange = () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
-      debounceRef.current = setTimeout(updateSelection, 80)
+      updateSelection()
+    }
+
+    const handleMouseUp = () => {
+      // Small delay to ensure selection is updated
+      setTimeout(updateSelection, 10)
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -59,13 +62,34 @@ export function useTextSelection(containerRef: RefObject<HTMLElement | null>) {
       }
     }
 
+    const handleClick = (e: MouseEvent) => {
+      const toolbar = document.querySelector('[role="toolbar"]')
+      const target = e.target as Node
+
+      // Don't clear if clicking on the toolbar itself
+      if (toolbar && toolbar.contains(target)) {
+        return
+      }
+
+      // Clear selection if clicking outside the toolbar and selection area
+      const selection = window.getSelection()
+      if (!selection || selection.isCollapsed) {
+        clearSelection()
+      }
+    }
+
     document.addEventListener("selectionchange", handleSelectionChange)
+    document.addEventListener("mouseup", handleMouseUp)
     document.addEventListener("keydown", handleKeyDown)
+    document.addEventListener("click", handleClick)
+    window.addEventListener("scroll", clearSelection)
 
     return () => {
       document.removeEventListener("selectionchange", handleSelectionChange)
+      document.removeEventListener("mouseup", handleMouseUp)
       document.removeEventListener("keydown", handleKeyDown)
-      if (debounceRef.current) clearTimeout(debounceRef.current)
+      document.removeEventListener("click", handleClick)
+      window.removeEventListener("scroll", clearSelection)
     }
   }, [updateSelection, clearSelection])
 

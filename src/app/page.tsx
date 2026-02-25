@@ -8,51 +8,39 @@ import { StorySection } from "@/components/story-section";
 import { storyCards } from "@/lib/data";
 import { BookOpen } from "lucide-react";
 
-const CHAPTERS: Chapter[] = [
-  {
-    id: "first-expedition",
-    title: "First Expedition Against Sasanka",
-    status: "in-progress",
-    progress: 30,
-    badgeText: "30% completed",
-    statusLabel: "30%",
-    partLabel: "Part 1",
-    bodyHeading: "The Challenge Ahead",
-    body: [],
-  },
-  {
-    id: "conquest-after-death",
-    title: "Conquest after Sasanka's death",
-    status: "not-started",
-    progress: 0,
-    badgeText: undefined,
-    statusLabel: "Not started",
-    partLabel: "Overview",
-    bodyHeading: "Aftermath of the Conflict",
-    body: [],
-  },
-  {
-    id: "conquest-of-magadha",
-    title: "Conquest of Magadha",
-    status: "not-started",
-    progress: 0,
-    badgeText: undefined,
-    statusLabel: "Not started",
-    partLabel: "Prelude",
-    bodyHeading: "Towards Magadha",
-    body: [],
-  },
-];
+// Generate chapters from story cards
+const CHAPTERS: Chapter[] = storyCards.map((card, index) => ({
+  id: card.id,
+  title: card.title,
+  status: index === 0 ? "in-progress" : index === 1 ? "completed" : "not-started",
+  progress: index === 0 ? 30 : index === 1 ? 100 : 0,
+  badgeText: index === 0 ? "30% completed" : index === 1 ? "Completed" : undefined,
+  statusLabel: index === 0 ? "30%" : index === 1 ? "Completed" : "Not started",
+  partLabel: card.label,
+  bodyHeading: card.title,
+  body: [card.description],
+}));
 
 export default function PrepdhaPage() {
   const [selectedChapterId, setSelectedChapterId] = useState(
     CHAPTERS[0]?.id ?? ""
   );
 
+  const selectedChapter = CHAPTERS.find((c) => c.id === selectedChapterId);
+
+  const chapterContext = selectedChapter ? 
+    `Chapter: ${selectedChapter.title}\nDescription: ${selectedChapter.body[0]?.substring(0, 500) || ''}...` : 
+    null;
+
   const [contextReference, setContextReference] = useState<string | null>(null);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
 
   const handleClearReference = useCallback(() => {
     setContextReference(null);
+  }, []);
+
+  const handleAskAI = useCallback((text: string) => {
+    setPendingMessage(text);
   }, []);
 
   return (
@@ -77,17 +65,14 @@ export default function PrepdhaPage() {
             </div>
             <div>
               <h1 className="text-lg font-semibold text-foreground">
-                First Expedition Against Sasanka
+                {selectedChapter?.title || "Chapter"}
               </h1>
-              <p className="text-xs text-muted-foreground">
-                History &gt; Social Studies &gt; Military Campaigns
-              </p>
             </div>
           </div>
         </header>
 
         <div className="mx-auto max-w-3xl px-6 py-8">
-          <StorySection cards={storyCards} />
+          <StorySection cards={storyCards.filter(card => card.id === selectedChapterId)} chapter={selectedChapter} onAskAI={handleAskAI} />
         </div>
       </main>
 
@@ -96,8 +81,10 @@ export default function PrepdhaPage() {
         <RightPanel
           contextReference={contextReference}
           onClearReference={handleClearReference}
-          chapterContext={null}
+          chapterContext={chapterContext}
           currentChapterId={selectedChapterId}
+          pendingMessage={pendingMessage}
+          onPendingMessageHandled={() => setPendingMessage(null)}
         />
       </aside>
 

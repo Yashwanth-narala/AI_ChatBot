@@ -33,15 +33,10 @@ interface ChatThread {
   chapterId: string | null
 }
 
-type TabId = "chat" | "flashcards" | "questions" | "notes" | "attachments" | "edit"
+type TabId = "chat"
 
 const tabs: { id: TabId; icon: typeof MessageSquare; label: string }[] = [
   { id: "chat", icon: MessageSquare, label: "Chat" },
-  { id: "flashcards", icon: BookOpen, label: "Flashcards" },
-  { id: "questions", icon: HelpCircle, label: "Questions" },
-  { id: "notes", icon: FileText, label: "Notes" },
-  { id: "attachments", icon: Paperclip, label: "Attachments" },
-  { id: "edit", icon: Pencil, label: "Edit" },
 ]
 
 // Pre-populated chat threads to match the Figma design
@@ -49,7 +44,7 @@ const initialThreads: ChatThread[] = [
   {
     id: "thread-1",
     title: "Youngest Kings in History",
-    chapterId: "chapter-2",
+    chapterId: "2",
     messages: [
       {
         id: "t1-1",
@@ -70,7 +65,7 @@ const initialThreads: ChatThread[] = [
   {
     id: "thread-2",
     title: "Topic explanation as a five year old",
-    chapterId: "chapter-2",
+    chapterId: "2",
     messages: [
       {
         id: "t2-1",
@@ -90,7 +85,7 @@ const initialThreads: ChatThread[] = [
   {
     id: "thread-3",
     title: "Summary of \"First Expedition Aga...",
-    chapterId: "chapter-2",
+    chapterId: "2",
     messages: [
       {
         id: "t3-1",
@@ -114,6 +109,8 @@ interface RightPanelProps {
   chapterContext: string | null
   onClearReference: () => void
   currentChapterId: string | null
+  pendingMessage: string | null
+  onPendingMessageHandled: () => void
 }
 
 export function RightPanel({
@@ -121,6 +118,8 @@ export function RightPanel({
   chapterContext,
   onClearReference,
   currentChapterId,
+  pendingMessage,
+  onPendingMessageHandled,
 }: RightPanelProps) {
   const [activeTab, setActiveTab] = useState<TabId>("chat")
   const [threads, setThreads] = useState<ChatThread[]>(initialThreads)
@@ -151,6 +150,150 @@ export function RightPanel({
       setShowSummary(true)
     }
   }, [currentChapterId, activeThreadByChapter])
+
+    // sendToAI: send messages to the AI and stream assistant response into the thread
+    const sendToAI = useCallback(
+      async (
+        threadId: string,
+        messages: Message[],
+        reference?: string,
+        chapterFallback?: string | null
+      ) => {
+        try {
+          setIsSending(true)
+          setError(null)
+
+          const placeholderId = `${threadId}-ai-${Date.now()}`
+          const placeholderTimestamp = new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+
+          const placeholderMsg: Message = {
+            id: placeholderId,
+            role: "assistant",
+            content: "",
+            timestamp: placeholderTimestamp,
+          }
+
+          setThreads((prev) =>
+            prev.map((t) =>
+              t.id === threadId
+                ? { ...t, messages: [...t.messages, placeholderMsg] }
+                : t
+            )
+          )
+
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              messages: messages.map((m) => ({
+                role: m.role,
+                content: m.content,
+              })),
+              context: reference ?? chapterFallback ?? undefined,
+            }),
+          })
+
+          if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}))
+            throw new Error(errorBody?.error || "Failed to get a response from AI")
+          }
+
+          const data = await response.json()
+          const aiContent: string =
+            typeof data?.content === "string"
+              ? data.content
+              : "I’m sorry, I couldn’t generate a response. Please try again."
+
+          let index = 0
+          const step = Math.max(2, Math.floor(aiContent.length / 80))
+
+          const interval = setInterval(() => {
+            index += step
+            const nextText =
+              index >= aiContent.length
+                ? aiContent
+                : aiContent.slice(0, index)
+
+            setThreads((prev) =>
+              prev.map((t) =>
+                t.id === threadId
+                  ? {
+                      ...t,
+                      messages: t.messages.map((m) =>
+                        m.id === placeholderId ? { ...m, content: nextText } : m
+                      ),
+                    }
+                  : t
+              )
+            )
+
+            if (index >= aiContent.length) {
+              clearInterval(interval)
+            }
+          }, 20)
+        } catch (err) {
+          console.error(err)
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Something went wrong while talking to the AI."
+          )
+        } finally {
+          setIsSending(false)
+        }
+      },
+      []
+    )
+
+  // Handle pending message from text selection
+  useEffect(() => {
+    if (pendingMessage && activeTab === "chat") {
+      // If no active thread, create a new one for the current chapter
+      let targetThreadId = activeThreadId
+      if (!targetThreadId) {
+        const newThread: ChatThread = {
+          id: `thread-${Date.now()}`,
+          title: `Question about selected text`,
+          messages: [],
+          chapterId: currentChapterId,
+        }
+        setThreads(prev => [...prev, newThread])
+        setActiveThreadId(newThread.id)
+        setActiveThreadByChapter(prev => ({ ...prev, [currentChapterId || ""]: newThread.id }))
+        targetThreadId = newThread.id
+        setShowSummary(false)
+      }
+
+      // Add the user message
+      const userMessage: Message = {
+        id: `msg-${Date.now()}`,
+        role: "user",
+        content: pendingMessage,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      }
+
+      setThreads(prev => prev.map(thread =>
+        thread.id === targetThreadId
+          ? { ...thread, messages: [...thread.messages, userMessage] }
+          : thread
+      ))
+
+      // Trigger AI response
+      const currentThread = threads.find((t) => t.id === targetThreadId)
+      const messagesForApi = currentThread
+        ? [...currentThread.messages, userMessage]
+        : [userMessage]
+
+      void sendToAI(targetThreadId, messagesForApi, chapterContext)
+
+      onPendingMessageHandled()
+    }
+  }, [pendingMessage, activeTab, activeThreadId, currentChapterId, onPendingMessageHandled, threads, sendToAI, chapterContext])
 
   const getSuggestionsForThread = useCallback((thread: ChatThread | null): string[] => {
     if (!thread || thread.messages.length === 0) {
@@ -219,103 +362,6 @@ export function RightPanel({
     }
   }, [currentChapterId])
 
-  const sendToAI = useCallback(
-    async (
-      threadId: string,
-      messages: Message[],
-      reference?: string,
-      chapterFallback?: string | null
-    ) => {
-      try {
-        setIsSending(true)
-        setError(null)
-
-        const placeholderId = `${threadId}-ai-${Date.now()}`
-        const placeholderTimestamp = new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-
-        const placeholderMsg: Message = {
-          id: placeholderId,
-          role: "assistant",
-          content: "",
-          timestamp: placeholderTimestamp,
-        }
-
-        setThreads((prev) =>
-          prev.map((t) =>
-            t.id === threadId
-              ? { ...t, messages: [...t.messages, placeholderMsg] }
-              : t
-          )
-        )
-
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            messages: messages.map((m) => ({
-              role: m.role,
-              content: m.content,
-            })),
-            context: reference ?? chapterFallback ?? undefined,
-          }),
-        })
-
-        if (!response.ok) {
-          const errorBody = await response.json().catch(() => ({}))
-          throw new Error(errorBody?.error || "Failed to get a response from AI")
-        }
-
-        const data = await response.json()
-        const aiContent: string =
-          typeof data?.content === "string"
-            ? data.content
-            : "I’m sorry, I couldn’t generate a response. Please try again."
-
-        let index = 0
-        const step = Math.max(2, Math.floor(aiContent.length / 80))
-
-        const interval = setInterval(() => {
-          index += step
-          const nextText =
-            index >= aiContent.length
-              ? aiContent
-              : aiContent.slice(0, index)
-
-          setThreads((prev) =>
-            prev.map((t) =>
-              t.id === threadId
-                ? {
-                    ...t,
-                    messages: t.messages.map((m) =>
-                      m.id === placeholderId ? { ...m, content: nextText } : m
-                    ),
-                  }
-                : t
-            )
-          )
-
-          if (index >= aiContent.length) {
-            clearInterval(interval)
-          }
-        }, 20)
-      } catch (err) {
-        console.error(err)
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Something went wrong while talking to the AI."
-        )
-      } finally {
-        setIsSending(false)
-      }
-    },
-    []
-  )
 
   const handleSendMessage = useCallback(
     async (text: string) => {

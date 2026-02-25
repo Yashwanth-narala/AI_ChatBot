@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, useCallback } from "react"
+import Image from "next/image"
 import {
   Sparkles,
   MessageSquare,
@@ -32,6 +33,7 @@ function TextToolbar({
   onAddComment,
   onHighlight,
   onCopy,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onClose,
 }: TextToolbarProps) {
   return (
@@ -635,11 +637,12 @@ export function ContentReader({
               {/* Optional image for the first part or when provided */}
               {section.image && (
                 <div className="px-4 pb-4">
-                  <div className="rounded-lg overflow-hidden">
-                    <img
+                  <div className="relative rounded-lg overflow-hidden">
+                    <Image
                       src={section.image}
                       alt={section.title}
-                      className="w-full h-56 object-cover"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 </div>
