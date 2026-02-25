@@ -51,25 +51,28 @@ export function Sidebar({
                   key={chapter.id}
                   type="button"
                   onClick={() => onSelectChapter(chapter.id)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-[13px] transition ${
+                  className={`flex w-full items-start gap-3 rounded-xl px-3 py-2 text-left text-[13px] transition ${
                     isActive
                       ? "bg-[#eef2ff] font-semibold text-[--accent-purple]"
                       : "text-gray-500 hover:bg-gray-50"
                   }`}
                 >
-                  {/* Title + badge */}
-                  <span className="flex flex-col">
-                    <span className="truncate">{chapter.title}</span>
+                  {/* Left: title + subtitle */}
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate">
+                      {chapter.title}
+                    </span>
+
                     {chapter.badgeText && (
-                      <span className="text-[10px] font-medium text-gray-500">
+                      <span className="text-[10px] text-gray-500">
                         {chapter.badgeText}
                       </span>
                     )}
-                  </span>
+                  </div>
 
-                  {/* Status / Progress */}
+                  {/* Right: status / progress */}
                   <span
-                    className={`flex h-8 w-8 items-center justify-center rounded-full text-[10px] font-semibold ${
+                    className={`shrink-0 flex h-7 min-w-[36px] items-center justify-center rounded-full text-[10px] font-semibold ${
                       chapter.status === "in-progress"
                         ? "bg-white text-[--accent-purple]"
                         : "bg-gray-100 text-gray-500"
