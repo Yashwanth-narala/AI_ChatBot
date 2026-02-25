@@ -37,11 +37,6 @@ export function Sidebar({
       {/* Content (hidden initially) */}
       {isOpen && (
         <>
-          {/* Category */}
-          <div className="mb-3 text-[10px] font-medium uppercase tracking-wide text-gray-500">
-            History / Social Studies / Military Campaigns and Expansion
-          </div>
-
           {/* Chapter list */}
           <div className="space-y-2 text-sm">
             {chapters.map((chapter) => {

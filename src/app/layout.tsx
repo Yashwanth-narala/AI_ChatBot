@@ -11,9 +11,26 @@ const sourceSans = Source_Sans_3({
 })
 
 export const metadata: Metadata = {
-  title: "Prepdha Schools - Interactive Learning Platform",
+  title: "Prepdha - First Expedition Against Sasanka",
   description:
-    "An interactive educational platform for schools with AI-powered learning tools, flashcards, notes, and chapter-based reading experiences.",
+    "An interactive educational storytelling experience about Harsha's first military expedition against King Sasanka of Gauda.",
+  icons: {
+    icon: [
+      {
+        url: "/icon-light-32x32.png",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icon-dark-32x32.png",
+        media: "(prefers-color-scheme: dark)",
+      },
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    apple: "/apple-icon.png",
+  },
 }
 
 export const viewport: Viewport = {
@@ -22,9 +39,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -37,6 +54,7 @@ export default function RootLayout({
         >
           {children}
         </ThemeProvider>
+
         <Analytics />
       </body>
     </html>

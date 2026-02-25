@@ -28,7 +28,7 @@ export function QuestionsPanel() {
       answer: "Sixteen years old, in 606 CE",
     },
   ])
-  const [editingId, setEditingId] = useState<string | null>(null)
+  // const [editingId, setEditingId] = useState<string | null>(null)
 
   const addQuestion = () => {
     const newQ: QuestionCard = {

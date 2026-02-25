@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import Image from "next/image"
 import { Send, X, FileText, ChevronLeft } from "lucide-react"
 
 interface Message {
@@ -90,11 +91,12 @@ export function ChatPanel({
             ) : (
               <div className="flex flex-col items-start gap-1">
                 {msg.image && (
-                  <div className="max-w-[85%] rounded-lg overflow-hidden border border-border">
-                    <img
+                  <div className="relative max-w-[85%] rounded-lg overflow-hidden border border-border">
+                    <Image
                       src={msg.image}
                       alt="AI shared reference"
-                      className="w-full h-auto"
+                      fill
+                      className="object-cover"
                     />
                   </div>
                 )}
